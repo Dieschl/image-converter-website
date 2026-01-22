@@ -24,3 +24,43 @@ input[type="range"] { width:180px; }
 @media (min-width: 1200px){ .left-rail, .right-rail { display:flex; flex-direction:column; } }
 @media (max-width: 1199px){ .left-rail, .right-rail { display:none; } }
 .footer-links a { color: inherit; }
+
+/* ===== Legal Pages (Impressum, Datenschutz, Cookies) ===== */
+.legal {
+  max-width: 800px;
+  margin: 24px auto 48px auto;
+  line-height: 1.6;
+  color: #111;
+}
+
+.legal h1 {
+  font-size: 2rem;
+  margin: 0 0 1rem 0;
+}
+
+.legal h2 {
+  font-size: 1.25rem;
+  margin: 1.5rem 0 .5rem 0;
+}
+
+.legal p {
+  margin: .5rem 0 1rem 0;
+}
+
+.legal ul {
+  margin: .5rem 0 1rem 1.25rem;
+  padding: 0;
+}
+
+.legal li {
+  margin: .25rem 0;
+}
+
+.legal .muted {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.legal-back {
+  margin-top: 2rem;
+}
