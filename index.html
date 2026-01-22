@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bildformat-Konverter – Schnell & Kostenlos</title>
-  <meta name="description" content="Konvertiere Bilder blitzschnell zwischen PNG, JPG, WEBP, AVIF – direkt im Browser. Keine Uploads, 100% privat." />
+  <meta name="description" content="Konvertiere Bilder blitzschnell zwischen JPG, PNG, WEBP, AVIF und PDF – direkt im Browser. Keine Uploads, 100% privat." />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
@@ -18,21 +18,23 @@
   <header>
     <div class="container">
       <h1>Bildformat-Konverter</h1>
-      <p class="muted">Konvertiere PNG, JPG, WEBP, AVIF – direkt im Browser. Keine Uploads.</p>
+      <p class="muted">Konvertiere JPG, PNG, WEBP, AVIF und PDF – direkt im Browser. Keine Uploads.</p>
     </div>
   </header>
 
   <!-- Hauptlayout mit linker und rechter Werbespalte -->
   <div class="layout-outer">
+    <!-- Linker Werbeplatz -->
     <aside class="left-rail" aria-label="Anzeige links">
       <div class="rail-ad" data-ad-slot="left-1">Ad Slot (Left 300×600)</div>
     </aside>
 
+    <!-- Hauptinhalt -->
     <main class="main-col">
       <section class="panel">
-        <div id="dropzone" class="dropzone">
+        <div id="dropzone" class="dropzone" tabindex="0" aria-label="Dateien hier ablegen oder anklicken">
           <p><strong>Dateien hier ablegen</strong> oder klicken zum Auswählen</p>
-          <p class="muted">Unterstützt: PNG, JPG, WEBP, (AVIF*)</p>
+          <p class="muted">Unterstützt: PNG, JPG, WEBP, (AVIF*), PDF‑Export</p>
           <input id="fileInput" type="file" accept="image/*" multiple style="display:none" />
         </div>
 
@@ -43,6 +45,7 @@
               <option value="image/png">PNG</option>
               <option value="image/webp">WEBP</option>
               <option value="image/avif">AVIF (experimentell)</option>
+              <option value="application/pdf">PDF (alle Bilder, ein Dokument)</option>
             </select>
           </label>
 
@@ -51,7 +54,7 @@
           </label>
 
           <label>Max. Breite (px):
-            <input id="maxWidth" type="number" min="0" step="50" placeholder="z.B. 2000" />
+            <input id="maxWidth" type="number" min="0" step="50" placeholder="z. B. 2000" />
           </label>
 
           <button id="convertBtn" disabled>Konvertieren</button>
@@ -63,6 +66,7 @@
       </section>
     </main>
 
+    <!-- Rechter Werbeplatz -->
     <aside class="right-rail" aria-label="Anzeige rechts">
       <div class="rail-ad" data-ad-slot="right-1">Ad Slot (Right 300×600)</div>
     </aside>
@@ -75,13 +79,22 @@
 
   <footer class="container footer-links">
     <p class="muted">
-      <a href="/legal/impressum.html">Impressum</a> ·
-      <a href="/legal/datenschutz.html">Datenschutz</a> ·
-      <a href="/legal/cookies.html">Cookie-Einstellungen</a>
+      <a href="legal/impressum.html">Impressum</a> ·
+      <a href="legal/datenschutz.html">Datenschutz</a> ·
+      <a href="legal/cookies.html">Cookie-Einstellungen</a>
     </p>
   </footer>
 
-  <!-- Optional: AdSense-Snippet später einfügen; Consent-Banner vor dem Laden beachten. -->
+  <!-- pdf-lib für clientseitige PDF-Erzeugung -->
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <!-- Deine App-Logik (enthält Drag&Drop-Fixes, Bild->Bild und Bild->PDF Konvertierung) -->
   <script type="module" src="js/app.js"></script>
+
+  <!-- Optional: Noscript-Hinweis -->
+  <noscript>
+    <div class="container">
+      <p class="muted" style="color:#b00020;">Für die Konvertierung wird JavaScript benötigt. Bitte im Browser aktivieren.</p>
+    </div>
+  </noscript>
 </body>
 </html>
