@@ -1,8 +1,52 @@
 
 <!doctype html>
-<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Cookie-Einstellungen</title><link rel=stylesheet href="../css/styles.css"></head>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Cookie‑Einstellungen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  ../css/styles.css
+</head>
 <body class="container">
-  <h1>Cookie-Einstellungen</h1>
-  <p>Platzhalter für dein Consent-Management (CMP). Hier können Nutzer ihre Einwilligungen ändern.</p>
+  <h1>Cookie‑Einstellungen</h1>
+
+  <p>
+    Hier können Sie Ihre Einwilligungen zu Cookies und ähnlichen Technologien anpassen.
+    Unsere Website nutzt eine Consent‑Management‑Plattform (CMP), um Ihre Auswahl zu speichern
+    und den <strong>Google Consent Mode v2</strong> zu steuern. Marketing‑Cookies (z. B. für
+    Google AdSense) werden <strong>nur nach Ihrer Einwilligung</strong> gesetzt.
+  </p>
+
+  <h2>Ihre Auswahl ändern</h2>
+  <p>
+    <button id="open-cmp" type="button">Cookie‑Einstellungen öffnen</button>
+  </p>
+  <p class="muted">
+    Hinweis: Je nach verwendeter CMP kann der Button den Präferenz‑Dialog erneut öffnen oder Sie
+    zu einem externen Einstellungsbereich führen.
+  </p>
+
+  <h2>Kategorien (Beispiel)</h2>
+  <ul>
+    <li><strong>Notwendig:</strong> technisch erforderliche Cookies (z. B. Consent‑Speicherung)</li>
+    <li><strong>Statistik:</strong> Reichweitenmessung (nur mit Einwilligung)</li>
+    <li><strong>Marketing:</strong> Werbung/Personalisierung (nur mit Einwilligung; z. B. Google AdSense)</li>
+  </ul>
+
   <p><a href="/">Zurück zur Startseite</a></p>
-</body></html>
+
+  <script>
+    // Beispiel-Hooks – bitte durch CMP-spezifische API ersetzen
+    document.getElementById('open-cmp')?.addEventListener('click', () => {
+      // Quantcast Choice:
+      // window.__tcfapi && window.__tcfapi('displayConsentUi', 2, () => {});
+      // Cookiebot:
+      // window.Cookiebot && window.Cookiebot.renew();
+      // Consentmanager:
+      // (function(){ var e=document.createEvent('Event'); e.initEvent('cmApiCmpShow',true,true); window.dispatchEvent(e);})();
+      alert('Bitte CMP-spezifischen Hook einbinden, um den Dialog zu öffnen.');
+    });
+  </script>
+</body>
+</html>
+``
