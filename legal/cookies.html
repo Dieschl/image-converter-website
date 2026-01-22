@@ -2,51 +2,80 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-  <title>Cookie‑Einstellungen</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  ../css/styles.css
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Datenschutzerklärung</title>
+  <link rel="icon" type="image/png" href="../assets/favicon.png" />
+  <link rel="stylesheet" href="../css/styles.css" />
 </head>
 <body class="container">
-  <h1>Cookie‑Einstellungen</h1>
+  <main class="legal">
+    <h1>Datenschutzerklärung</h1>
+    <p><strong>Stand:</strong> [[Monat Jahr]]</p>
 
-  <p>
-    Hier können Sie Ihre Einwilligungen zu Cookies und ähnlichen Technologien anpassen.
-    Unsere Website nutzt eine Consent‑Management‑Plattform (CMP), um Ihre Auswahl zu speichern
-    und den <strong>Google Consent Mode v2</strong> zu steuern. Marketing‑Cookies (z. B. für
-    Google AdSense) werden <strong>nur nach Ihrer Einwilligung</strong> gesetzt.
-  </p>
+    <h2>1. Verantwortlicher</h2>
+    <p>
+      [[Name/Firma]]<br />
+      [[Anschrift]]<br />
+      E‑Mail: [[kontakt@deine-domain.de]]
+    </p>
 
-  <h2>Ihre Auswahl ändern</h2>
-  <p>
-    <button id="open-cmp" type="button">Cookie‑Einstellungen öffnen</button>
-  </p>
-  <p class="muted">
-    Hinweis: Je nach verwendeter CMP kann der Button den Präferenz‑Dialog erneut öffnen oder Sie
-    zu einem externen Einstellungsbereich führen.
-  </p>
+    <h2>2. Zwecke und Rechtsgrundlagen</h2>
+    <p>
+      Wir betreiben ein Tool zur Konvertierung von Bildformaten. Die Konvertierung erfolgt vollständig im Browser (Client‑seitig),
+      ohne dass Dateien an unsere Server übertragen oder dort gespeichert werden. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse).
+    </p>
 
-  <h2>Kategorien (Beispiel)</h2>
-  <ul>
-    <li><strong>Notwendig:</strong> technisch erforderliche Cookies (z. B. Consent‑Speicherung)</li>
-    <li><strong>Statistik:</strong> Reichweitenmessung (nur mit Einwilligung)</li>
-    <li><strong>Marketing:</strong> Werbung/Personalisierung (nur mit Einwilligung; z. B. Google AdSense)</li>
-  </ul>
+    <h2>3. Hosting &amp; CDN (Cloudflare Pages)</h2>
+    <p>
+      Bereitstellung und Auslieferung dieser Website erfolgen über Cloudflare Pages (Cloudflare, Inc.). Beim Aufruf werden Verbindungsdaten über
+      das Cloudflare‑Netz geleitet (SSL, Caching, DDoS‑Schutz). Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.
+    </p>
 
-  <p><a href="/">Zurück zur Startseite</a></p>
+    <h2>4. Client‑seitige Bildverarbeitung</h2>
+    <p>
+      Ihre ausgewählten Bilddateien werden ausschließlich lokal in Ihrem Browser verarbeitet (kein Upload).
+      Ergebnisse werden nur lokal zum Download bereitgestellt.
+    </p>
 
-  <script>
-    // Beispiel-Hooks – bitte durch CMP-spezifische API ersetzen
-    document.getElementById('open-cmp')?.addEventListener('click', () => {
-      // Quantcast Choice:
-      // window.__tcfapi && window.__tcfapi('displayConsentUi', 2, () => {});
-      // Cookiebot:
-      // window.Cookiebot && window.Cookiebot.renew();
-      // Consentmanager:
-      // (function(){ var e=document.createEvent('Event'); e.initEvent('cmApiCmpShow',true,true); window.dispatchEvent(e);})();
-      alert('Bitte CMP-spezifischen Hook einbinden, um den Dialog zu öffnen.');
-    });
-  </script>
+    <h2>5. Consent Management &amp; Google Consent Mode v2</h2>
+    <p>
+      Wir setzen eine Consent‑Management‑Plattform (CMP) ein ([[Name der CMP]]), um Einwilligungen für Cookies/ähnliche Technologien einzuholen
+      (Art. 6 Abs. 1 lit. a DSGVO i. V. m. § 25 TTDSG). Der Google Consent Mode v2 steuert anhand Ihrer Entscheidung die Ausführung von Tags
+      (z. B. für Werbung).
+    </p>
+
+    <h2>6. Werbung (Google AdSense)</h2>
+    <p>
+      Wir binden Google AdSense ein (Google Ireland Ltd.). AdSense verwendet Cookies/ähnliche Technologien, um Anzeigen auszuliefern und deren
+      Leistung zu messen. Rechtsgrundlage: <strong>Ihre Einwilligung</strong> (Art. 6 Abs. 1 lit. a DSGVO i. V. m. § 25 TTDSG). Bei Ablehnung
+      wird nur kontextbezogene Werbung ohne personenbezogene Profile angezeigt.
+    </p>
+
+    <h2>7. Server‑Logs / Analytik</h2>
+    <p>
+      Eigene Server‑Logs speichern wir nicht. Cloudflare kann zur Sicherstellung des Betriebs aggregierte bzw. pseudonymisierte Daten verarbeiten.
+      [[Optional: eingesetzte Analytics‑Tools mit Rechtsgrundlage ergänzen]]
+    </p>
+
+    <h2>8. Speicherdauer</h2>
+    <p>
+      Personenbezogene Daten verarbeiten wir nur so lange, wie es für die genannten Zwecke erforderlich ist oder gesetzliche Pflichten bestehen.
+    </p>
+
+    <h2>9. Ihre Rechte</h2>
+    <ul>
+      <li>Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit</li>
+      <li>Widerspruch (Art. 21 DSGVO) und Widerruf erteilter Einwilligungen</li>
+      <li>Beschwerderecht bei einer Aufsichtsbehörde (Art. 77 DSGVO)</li>
+    </ul>
+
+    <h2>10. Änderungen</h2>
+    <p>
+      Wir passen diese Erklärung an, wenn sich Dienste oder Rechtslage ändern. Bitte prüfen Sie diese Seite regelmäßig.
+    </p>
+
+    <p class="legal-back"><a href="/">Zurück zur Startseite</a></p>
+  </main>
 </body>
 </html>
-``
