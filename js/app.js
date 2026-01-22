@@ -1,19 +1,17 @@
 
-// Fix A: Global Drag&Drop verhindern (sonst öffnet der Browser Bilder im Tab)
+// --- Global: Standard-Drag&Drop des Browsers verhindern (sonst öffnet er Bilder) ---
 ['dragenter','dragover','dragleave','drop'].forEach(evt => {
-  window.addEventListener(evt, e => {
-    e.preventDefault();
-  });
+  window.addEventListener(evt, e => e.preventDefault());
 });
 
-const dropzone = document.getElementById('dropzone');
-const fileInput = document.getElementById('fileInput');
-const formatSel = document.getElementById('format');
-const qualityInput = document.getElementById('quality');
-const maxWidthInput = document.getElementById('maxWidth');
-const convertBtn = document.getElementById('convertBtn');
+const dropzone       = document.getElementById('dropzone');
+const fileInput      = document.getElementById('fileInput');
+const formatSel      = document.getElementById('format');
+const qualityInput   = document.getElementById('quality');
+const maxWidthInput  = document.getElementById('maxWidth');
+const convertBtn     = document.getElementById('convertBtn');
 const downloadAllBtn = document.getElementById('downloadAllBtn');
-const resultsEl = document.getElementById('results');
+const resultsEl      = document.getElementById('results');
 
 let files = [];
 let outputs = [];
@@ -29,7 +27,7 @@ const supports = {
   avif: supportsType('image/avif'),
 };
 
-// Fix B: Click auf Dropzone -> Dateidialog
+// Click auf Dropzone öffnet Datei-Dialog
 if (dropzone && fileInput) {
   dropzone.addEventListener('click', () => fileInput.click());
 }
@@ -37,6 +35,7 @@ if (fileInput) {
   fileInput.addEventListener('change', e => handleFiles([...e.target.files]));
 }
 
+// Dropzone-UX
 ['dragenter','dragover'].forEach(evt => dropzone.addEventListener(evt, e => {
   e.preventDefault(); e.stopPropagation(); dropzone.classList.add('dragover');
 }));
@@ -68,78 +67,83 @@ function renderList(list) {
 
 function escapeHtml(s){ return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
 
+// --- Canvas-Helfer mit Fallback (OffscreenCanvas oder klassischer Canvas) ---
+async function drawToCanvasBitmap(imgBitmap, width, height, type, quality) {
+  let canvas, ctx;
+  if ('OffscreenCanvas' in window) {
+    canvas = new OffscreenCanvas(width, height);
+    ctx = canvas.getContext('2d');
+  } else {
+    canvas = document.createElement('canvas');
+    canvas.width = width; canvas.height = height;
+    ctx = canvas.getContext('2d');
+  }
+  ctx.drawImage(imgBitmap, 0, 0, width, height);
+
+  // zu Blob konvertieren (mit Fallback für ältere Browser)
+  if (canvas.convertToBlob) {
+    return await canvas.convertToBlob({ type, quality });
+  } else {
+    return await new Promise(resolve => canvas.toBlob(resolve, type, quality));
+  }
+}
+
+// --- Bild -> Bild ---
 async function convertImage(file, targetType, quality, maxW) {
   const imgBitmap = await createImageBitmap(file);
   let { width, height } = imgBitmap;
+
   if (maxW && maxW > 0 && width > maxW) {
     height = Math.round(height * (maxW / width));
     width = maxW;
   }
-  const canvas = new OffscreenCanvas(width, height);
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(imgBitmap, 0, 0, width, height);
 
+  // Ziel-MIME an Browser-Support anpassen (Fallbacks)
   let type = targetType;
   if (type === 'image/avif' && !supports.avif) type = supports.webp ? 'image/webp' : 'image/jpeg';
   if (type === 'image/webp' && !supports.webp) type = 'image/jpeg';
 
-  const blob = await canvas.convertToBlob({ type, quality: Number(quality) || 0.8 });
+  const blob = await drawToCanvasBitmap(imgBitmap, width, height, type, Number(quality) || 0.8);
   return blob;
 }
 
-convertBtn.addEventListener('click', async () => {
-  convertBtn.disabled = true;
-  outputs = [];
-  const targetType = formatSel.value;
-  const quality = qualityInput.value;
-  const maxW = Number(maxWidthInput.value || 0);
+// --- Bild(er) -> PDF (ein Dokument, eine Seite pro Bild) ---
+async function convertToPdf(allFiles, quality, maxW) {
+  const { PDFDocument } = window.PDFLib;
+  const pdfDoc = await PDFDocument.create();
 
-  for (const f of files) {
-    try {
-      const blob = await convertImage(f, targetType, quality, maxW);
-      const outName = renameToExt(f.name, targetType);
-      outputs.push({ name: outName, blob });
-      appendResultCard(f, blob, outName);
-    } catch (e) {
-      appendErrorCard(f, e); console.error(e);
-    }
+  // A4 in Punkten: 595 x 842 (Portrait). Für Landscape drehen wir die Maße.
+  const A4_PORTRAIT  = { w: 595, h: 842 };
+  const A4_LANDSCAPE = { w: 842, h: 595 };
+
+  for (const file of allFiles) {
+    // 1) Bild ggf. skalieren/rekodieren (JPEG/PNG) bevor es ins PDF kommt
+    //    Wir nutzen JPEG für Fotos (kleinere Dateien), PNG könnte Transparenz behalten – hier bleiben wir pragmatisch: JPEG.
+    const targetForPdf = 'image/jpeg';
+    const blob = await convertImage(file, targetForPdf, Number(quality) || 0.8, Number(maxW) || 0);
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+
+    // 2) Bild in PDF einbetten
+    const img = await pdfDoc.embedJpg(bytes);
+    const imgW = img.width, imgH = img.height;
+
+    // 3) Page-Format wählen (A4 Portrait/Landscape) passend zur Bildausrichtung
+    const isLandscape = imgW >= imgH;
+    const pageSize = isLandscape ? A4_LANDSCAPE : A4_PORTRAIT;
+
+    // 4) Bild auf A4 einpassen (Seitenränder optional; hier 24 pt Rand)
+    const margin = 24;
+    const maxWpt = pageSize.w - 2*margin;
+    const maxHpt = pageSize.h - 2*margin;
+    const scale  = Math.min(maxWpt / imgW, maxHpt / imgH, 1);
+
+    const page = pdfDoc.addPage([pageSize.w, pageSize.h]);
+    const drawW = imgW * scale;
+    const drawH = imgH * scale;
+    const x = (pageSize.w - drawW) / 2;
+    const y = (pageSize.h - drawH) / 2;
+
+    page.drawImage(img, { x, y, width: drawW, height: drawH });
   }
 
-  downloadAllBtn.disabled = outputs.length === 0;
-  convertBtn.disabled = false;
-});
-
-function renameToExt(name, mime) {
-  const map = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/avif': 'avif' };
-  const ext = map[mime] || 'bin';
-  return name.replace(/\.[^.]+$/, '') + '.' + ext;
-}
-
-function appendResultCard(origFile, blob, outName) {
-  const url = URL.createObjectURL(blob);
-  const card = document.createElement('div');
-  card.className = 'card';
-  const a = document.createElement('a');
-  a.href = url; a.download = outName; a.textContent = 'Download';
-  a.style.display = 'inline-block'; a.style.marginTop = '8px';
-  card.innerHTML = `
-    <div><strong>${escapeHtml(outName)}</strong></div>
-    <div class="muted">${Math.round(blob.size/1024)} KB</div>`;
-  card.appendChild(a);
-  resultsEl.appendChild(card);
-}
-
-function appendErrorCard(file, err) {
-  const card = document.createElement('div'); card.className = 'card';
-  card.innerHTML = `
-    <div><strong>${escapeHtml(file.name)}</strong></div>
-    <div class="muted" style="color:#b00020;">Fehler: ${escapeHtml(err.message || 'Konvertierung fehlgeschlagen')}</div>`;
-  resultsEl.appendChild(card);
-}
-
-// Fix C: richtige Variable verwenden
-if (downloadAllBtn) {
-  downloadAllBtn.addEventListener('click', () => {
-    alert('Für ZIP-Download füge ich dir auf Wunsch JSZip hinzu.');
-  });
-}
+  const pdfBytes = await pdfDoc.save();
