@@ -1,10 +1,10 @@
-
 <!doctype html>
 <html lang="de">
 <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bilder-Konvertieren.de – Test mit InMobi CMP + Google Consent Mode</title>
 
-  
-<head>
   <!-- InMobi Choice. Consent Manager Tag v3.0 (for TCF 2.2) -->
   <script type="text/javascript" async>
   (function() {
@@ -139,8 +139,14 @@
     function makeGppStub() {
       const CMP_ID = 10;
       const SUPPORTED_APIS = [
-        '2:tcfeuv2','6:uspv1','7:usnatv1','8:usca','9:usvav1',
-        '10:uscov1','11:usutv1','12:usctv1'
+        '2:tcfeuv2',
+        '6:uspv1',
+        '7:usnatv1',
+        '8:usca',
+        '9:usvav1',
+        '10:uscov1',
+        '11:usutv1',
+        '12:usctv1'
       ];
 
       window.__gpp_addFrame = function (n) {
@@ -163,6 +169,7 @@
         if (!b.length || (b.length == 1 && b[0] == "queue")) {
           return __gpp.queue;
         }
+
         if (b.length == 1 && b[0] == "events") {
           return __gpp.events;
         }
@@ -171,139 +178,236 @@
         var clb = b.length > 1 ? b[1] : null;
         var par = b.length > 2 ? b[2] : null;
         if (cmd === "ping") {
-          clb({
-            gppVersion: "1.1",
-            cmpStatus: "stub",
-            cmpDisplayStatus: "hidden",
-            signalStatus: "not ready",
-            supportedAPIs: SUPPORTED_APIS,
-            cmpId: CMP_ID,
-            sectionList: [],
-            applicableSections: [-1],
-            gppString: "",
-            parsedSections: {},
-          }, true);
+          clb(
+            {
+              gppVersion: "1.1",
+              cmpStatus: "stub",
+              cmpDisplayStatus: "hidden",
+              signalStatus: "not ready",
+              supportedAPIs: SUPPORTED_APIS,
+              cmpId: CMP_ID,
+              sectionList: [],
+              applicableSections: [-1],
+              gppString: "",
+              parsedSections: {},
+            },
+            true
+          );
         } else if (cmd === "addEventListener") {
           if (!("lastId" in __gpp)) {
             __gpp.lastId = 0;
           }
           __gpp.lastId++;
           var lnr = __gpp.lastId;
-          __gpp.events.push({ id: lnr, callback: clb, parameter: par });
-          clb({
-            eventName: "listenerRegistered",
+          __gpp.events.push({
+            id: lnr,
+            callback: clb,
+            parameter: par,
+          });
+          clb(
+            {
+              eventName: "listenerRegistered",
+              listenerId: lnr,
+              data: true,
+              pingData: {
+                gppVersion: "1.1",
+                cmpStatus: "stub",
+                cmpDisplayStatus: "hidden",
+                signalStatus: "not ready",
+                supportedAPIs: SUPPORTED_APIS,
+                cmpId: CMP_ID,
+                sectionList: [],
+                applicableSections: [-1],
+                gppString: "",
+                parsedSections: {},
+              },
+            },
+            true
+          );
+        } else if (cmd === "removeEventListener") {
+          var success = false;
+          for (var i = 0; i < __gpp.events.length; i++) {
+            if (__gpp.events[i].id == par) {
+              __gpp.events.splice(i, 1);
+              success = true;
+              break;
+            }
+          }
+          clb(
+            {
+              eventName: "listenerRemoved",
+              listenerId: par,
+              data: success,
+              pingData: {
+                gppVersion: "1.1",
+                cmpStatus: "stub",
+                cmpDisplayStatus: "hidden",
+                signalStatus: "not ready",
+                supportedAPIs: SUPPORTED_APIS,
+                cmpId: CMP_ID,
+                sectionList: [],
+                applicableSections: [-1],
+                gppString: "",
+                parsedSections: {},
+              },
+            },
+            true
+          );
+        } else if (cmd === "hasSection") {
+          clb(false, true);
+        } else if (cmd === "getSection" || cmd === "getField") {
+          clb(null, true);
+        }
+        else {
+          __gpp.queue.push([].slice.apply(b));
+        }
+      };
+      window.__gpp_msghandler = function (event) {
+        var msgIsString = typeof event.data === "string";
+        try {
+          var json = msgIsString ? JSON.parse(event.data) : event.data;
+        } catch (e) {
+          var json = null;
+        }
+        if (typeof json === "object" && json !== null && "__gppCall" in json) {
+          var i = json.__gppCall;
+          window.__gpp(
+            i.command,
+            function (retValue, success) {
+              var returnMsg = {
+                __gppReturn: {
+                  returnValue: retValue,
+                  success: success,
+                  callId: i.callId,
+                },
+              };
+              event.source.postMessage(msgIsString ? JSON.stringify(returnMsg) : returnMsg, "*");
+            },
+            "parameter" in i ? i.parameter : null,
+            "version" in i ? i.version : "1.1"
+          );
+        }
+      };
+      if (!("__gpp" in window) || typeof window.__gpp !== "function") {
+        window.__gpp = window.__gpp_stub;
+        window.addEventListener("message", window.__gpp_msghandler, false);
+        window.__gpp_addFrame("__gppLocator");
+      }
+    };
 
-  
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bildformat-Konverter – Schnell & Kostenlos</title>
-  <meta name="description" content="Konvertiere Bilder blitzschnell zwischen JPG, PNG, WEBP, AVIF und PDF – direkt im Browser. Keine Uploads, 100% privat." />
-  <link rel="icon" type="image/png" href="assets/favicon.png" />
-  <link rel="stylesheet" href="css/styles.css" />
-  
-<link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
-<link rel="icon" href="/assets/favicon.png" type="image/png" sizes="32x32">
-<link rel="icon" href="/assets/favicon-16.png" type="image/png" sizes="16x16">
-<link rel="icon" href="/assets/favicon-32.png" type="image/png" sizes="32x32">
-<link rel="icon" href="/assets/favicon-48.png" type="image/png" sizes="48x48">
-<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
-<link rel="apple-touch-icon" href="/assets/favicon-180.png" sizes="180x180">
-<meta name="theme-color" content="#0067c5">
+    makeGppStub();
 
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7587905297330064"
-     crossorigin="anonymous"></script>
-  
+    var uspStubFunction = function() {
+      var arg = arguments;
+      if (typeof window.__uspapi !== uspStubFunction) {
+        setTimeout(function() {
+          if (typeof window.__uspapi !== 'undefined') {
+            window.__uspapi.apply(window.__uspapi, arg);
+          }
+        }, 500);
+      }
+    };
+
+    var checkIfUspIsReady = function() {
+      uspTries++;
+      if (window.__uspapi === uspStubFunction && uspTries < uspTriesLimit) {
+        console.warn('USP is not accessible');
+      } else {
+        clearInterval(uspInterval);
+      }
+    };
+
+    if (typeof window.__uspapi === 'undefined') {
+      window.__uspapi = uspStubFunction;
+      var uspInterval = setInterval(checkIfUspIsReady, 6000);
+    }
+  })();
+  </script>
+  <!-- End InMobi Choice. Consent Manager Tag v3.0 (for TCF 2.2) -->
+
+  <!-- Google Consent Mode v2 default states (will be updated by CMP when user chooses) -->
+  <script>
+    // Default denied until consent is given; Google will read TCF string from CMP
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}    
+    gtag('consent', 'default', {
+      'ad_storage': 'denied',
+      'analytics_storage': 'denied',
+      'ad_user_data': 'denied',
+      'ad_personalization': 'denied',
+      'wait_for_update': 500
+    });
+  </script>
+
+  <!-- Google tag (gtag.js) - replace G-XXXXXXXXXX with your GA4 Measurement ID -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX', { anonymize_ip: true });
+  </script>
+
+  <!-- Google AdSense (replace ca-pub-XXXXXXXXXXXXXXXX with your publisher id) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.5;margin:0;padding:2rem;background:#0f172a;color:#e5e7eb}
+    .container{max-width:920px;margin:0 auto}
+    h1{font-size:clamp(28px,4vw,40px);margin:0 0 1rem}
+    .card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:24px}
+    code{background:#1f2937;padding:.2rem .4rem;border-radius:6px}
+    .row{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px}
+    .btn{background:#2563eb;border:none;color:#fff;padding:10px 14px;border-radius:8px;cursor:pointer}
+    .btn.secondary{background:#374151}
+    .mt{margin-top:12px}
+    .small{opacity:.85}
+  </style>
 </head>
 <body>
-  <!-- Werbeplatz über der Überschrift -->
-  <div class="top-ad-wrapper container" aria-label="Anzeige oberhalb der Überschrift">
-    <div class="ad-slot" data-ad-slot="top-1">Ad Slot (Top Banner)</div>
-  </div>
+  <div class="container">
+    <h1>InMobi CMP + Google Consent Mode v2 – Demo</h1>
+    <div class="card">
+      <p>
+        Diese Beispiel-<code>index.html</code> lädt die <strong>InMobi Choice CMP</strong> (TCF 2.2) und initialisiert den <strong>Google Consent Mode v2</strong>.
+        Ersetze die Platzhalter:
+      </p>
+      <ul>
+        <li><code>host</code> ggf. mit <code>www.bilder-konvertieren.de</code>, falls deine Seite so ausliefert</li>
+        <li><code>G-XXXXXXXXXX</code> &rarr; GA4 Measurement-ID</li>
+        <li><code>ca-pub-XXXXXXXXXXXXXXXX</code> &rarr; AdSense Publisher-ID</li>
+      </ul>
+      <p class="small">Nach dem Nutzerentscheid aktualisiert die CMP automatisch die Consent-Signale, Google liest diese aus.</p>
 
-  <header>
-    <div class="container">
-      <h1 style="text-align: center;">Bildformat-Konverter</h1>
-      
-<p class="muted" style="text-align: center;">
-  <strong>Konvertiere JPG, PNG, WEBP, AVIF und PDF – direkt im Browser.<br>Keine Uploads.<br>DSGVO-konform.</strong>
-</p>
-
+      <div class="row mt">
+        <button class="btn" id="check-consent">TCF Ping in Konsole</button>
+        <button class="btn secondary" id="check-gcm">Consent Mode Status in Konsole</button>
+      </div>
+      <pre class="small mt">Öffne die Browser-Konsole und nutze außerdem:
+__tcfapi('getTCData', 2, console.log);
+__tcfapi('ping', 2, console.log);
+      </pre>
     </div>
-  </header>
 
-  <!-- Hauptlayout mit linker und rechter Werbespalte -->
-  <div class="layout-outer">
-    <!-- Linker Werbeplatz -->
-    <aside class="left-rail" aria-label="Anzeige links">
-      <div class="rail-ad" data-ad-slot="left-1">Ad Slot (Left 300×600)</div>
-    </aside>
-
-    <!-- Hauptinhalt -->
-    <main class="main-col">
-      <section class="panel">
-        <div id="dropzone" class="dropzone" tabindex="0" aria-label="Dateien hier ablegen oder anklicken">
-          <p><strong>Dateien hier ablegen</strong> oder klicken zum Auswählen</p>
-          <p class="muted">Unterstützt: PNG, JPG, WEBP, (AVIF*), PDF‑Export</p>
-          <input id="fileInput" type="file" accept="image/*" multiple style="display:none" />
-        </div>
-
-        <div class="controls">
-          <label>Ziel-Format:
-            <select id="format">
-              <option value="image/jpeg">JPG</option>
-              <option value="image/png">PNG</option>
-              <option value="image/webp">WEBP</option>
-              <option value="image/avif">AVIF (experimentell)</option>
-              <option value="application/pdf">PDF (alle Bilder, ein Dokument)</option>
-            </select>
-          </label>
-
-          <label>Qualität:
-            <input id="quality" type="range" min="0.1" max="1" step="0.05" value="0.8" />
-          </label>
-
-          <label>Max. Breite (px):
-            <input id="maxWidth" type="number" min="0" step="50" placeholder="z. B. 2000" />
-          </label>
-
-          <button id="convertBtn" disabled>Konvertieren</button>
-          <button id="downloadAllBtn" disabled>Alle herunterladen (.zip)</button>
-        </div>
-
-        <div id="results" class="results"></div>
-        <p class="muted">*AVIF abhängig von Browserunterstützung. Fallback erfolgt automatisch.</p>
-      </section>
-    </main>
-
-    <!-- Rechter Werbeplatz -->
-    <aside class="right-rail" aria-label="Anzeige rechts">
-      <div class="rail-ad" data-ad-slot="right-1">Ad Slot (Right 300×600)</div>
-    </aside>
-  </div>
-
-  <!-- Werbeplatz unten -->
-  <div class="bottom-ad-wrapper container" aria-label="Anzeige unten">
-    <div class="ad-slot-bottom" data-ad-slot="bottom-1">Ad Slot (Bottom 970/728×250)</div>
-  </div>
-
-  <footer class="container footer-links">
-    <p class="muted">
-      <a href="legal/impressum.html">Impressum</a> ·
-      <a href="legal/datenschutz.html">Datenschutz</a> ·
-      <a href="legal/cookies.html">Cookie-Einstellungen</a>
-    </p>
-  </footer>
-
-  <!-- pdf-lib für clientseitige PDF-Erzeugung -->
-  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-  <!-- Deine App-Logik (enthält Drag&Drop-Fixes, Bild->Bild und Bild->PDF Konvertierung) -->
-  <script type="module" src="js/app.js"></script>
-
-  <!-- Optional: Noscript-Hinweis -->
-  <noscript>
-    <div class="container">
-      <p class="muted" style="color:#b00020;">Für die Konvertierung wird JavaScript benötigt. Bitte im Browser aktivieren.</p>
+    <div class="card mt">
+      <h2>AdSense Demo-Platzhalter</h2>
+      <p class="small">Dieser Platz ist für eine Anzeige vorgesehen (wird ohne gültige Publisher-ID / ohne Zustimmung nicht laden).</p>
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
     </div>
-  </noscript>
+  </div>
+
+  <script>
+    document.getElementById('check-consent').addEventListener('click', function(){
+      if (typeof __tcfapi === 'function') {
+        __tcfapi('ping', 2, function(r){ console.log('TCF ping:', r); });
+        __tcfapi('getTCData', 2, function(r, s){ console.log('TCData:', r, s); });
+      } else {
+        console.warn('__tcfapi ist noch nicht initialisiert');
+      }
+    });
+
+    document.getElementById('check-gcm').addEventListener('click', function(){
+      console.log('dataLayer', window.dataLayer);
+    });
+  </script>
 </body>
 </html>
