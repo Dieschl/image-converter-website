@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bilder-Konvertieren.de – Test mit InMobi CMP + Google Consent Mode</title>
+  <title>Bilder-Konvertieren.de – InMobi CMP + Google AdSense (ohne Analytics)</title>
 
   <!-- InMobi Choice. Consent Manager Tag v3.0 (for TCF 2.2) -->
   <script type="text/javascript" async>
@@ -139,14 +139,7 @@
     function makeGppStub() {
       const CMP_ID = 10;
       const SUPPORTED_APIS = [
-        '2:tcfeuv2',
-        '6:uspv1',
-        '7:usnatv1',
-        '8:usca',
-        '9:usvav1',
-        '10:uscov1',
-        '11:usutv1',
-        '12:usctv1'
+        '2:tcfeuv2','6:uspv1','7:usnatv1','8:usca','9:usvav1','10:uscov1','11:usutv1','12:usctv1'
       ];
 
       window.__gpp_addFrame = function (n) {
@@ -169,7 +162,6 @@
         if (!b.length || (b.length == 1 && b[0] == "queue")) {
           return __gpp.queue;
         }
-
         if (b.length == 1 && b[0] == "events") {
           return __gpp.events;
         }
@@ -178,8 +170,28 @@
         var clb = b.length > 1 ? b[1] : null;
         var par = b.length > 2 ? b[2] : null;
         if (cmd === "ping") {
-          clb(
-            {
+          clb({
+            gppVersion: "1.1",
+            cmpStatus: "stub",
+            cmpDisplayStatus: "hidden",
+            signalStatus: "not ready",
+            supportedAPIs: SUPPORTED_APIS,
+            cmpId: CMP_ID,
+            sectionList: [],
+            applicableSections: [-1],
+            gppString: "",
+            parsedSections: {},
+          }, true);
+        } else if (cmd === "addEventListener") {
+          if (!("lastId" in __gpp)) { __gpp.lastId = 0; }
+          __gpp.lastId++;
+          var lnr = __gpp.lastId;
+          __gpp.events.push({ id: lnr, callback: clb, parameter: par });
+          clb({
+            eventName: "listenerRegistered",
+            listenerId: lnr,
+            data: true,
+            pingData: {
               gppVersion: "1.1",
               cmpStatus: "stub",
               cmpDisplayStatus: "hidden",
@@ -191,39 +203,7 @@
               gppString: "",
               parsedSections: {},
             },
-            true
-          );
-        } else if (cmd === "addEventListener") {
-          if (!("lastId" in __gpp)) {
-            __gpp.lastId = 0;
-          }
-          __gpp.lastId++;
-          var lnr = __gpp.lastId;
-          __gpp.events.push({
-            id: lnr,
-            callback: clb,
-            parameter: par,
-          });
-          clb(
-            {
-              eventName: "listenerRegistered",
-              listenerId: lnr,
-              data: true,
-              pingData: {
-                gppVersion: "1.1",
-                cmpStatus: "stub",
-                cmpDisplayStatus: "hidden",
-                signalStatus: "not ready",
-                supportedAPIs: SUPPORTED_APIS,
-                cmpId: CMP_ID,
-                sectionList: [],
-                applicableSections: [-1],
-                gppString: "",
-                parsedSections: {},
-              },
-            },
-            true
-          );
+          }, true);
         } else if (cmd === "removeEventListener") {
           var success = false;
           for (var i = 0; i < __gpp.events.length; i++) {
@@ -233,54 +213,40 @@
               break;
             }
           }
-          clb(
-            {
-              eventName: "listenerRemoved",
-              listenerId: par,
-              data: success,
-              pingData: {
-                gppVersion: "1.1",
-                cmpStatus: "stub",
-                cmpDisplayStatus: "hidden",
-                signalStatus: "not ready",
-                supportedAPIs: SUPPORTED_APIS,
-                cmpId: CMP_ID,
-                sectionList: [],
-                applicableSections: [-1],
-                gppString: "",
-                parsedSections: {},
-              },
+          clb({
+            eventName: "listenerRemoved",
+            listenerId: par,
+            data: success,
+            pingData: {
+              gppVersion: "1.1",
+              cmpStatus: "stub",
+              cmpDisplayStatus: "hidden",
+              signalStatus: "not ready",
+              supportedAPIs: SUPPORTED_APIS,
+              cmpId: CMP_ID,
+              sectionList: [],
+              applicableSections: [-1],
+              gppString: "",
+              parsedSections: {},
             },
-            true
-          );
+          }, true);
         } else if (cmd === "hasSection") {
           clb(false, true);
-        } else if (cmd === "getSection" || cmd === "getField") {
+        } else if (cmd === "getSection" or cmd === "getField") {
           clb(null, true);
-        }
-        else {
+        } else {
           __gpp.queue.push([].slice.apply(b));
         }
       };
       window.__gpp_msghandler = function (event) {
         var msgIsString = typeof event.data === "string";
-        try {
-          var json = msgIsString ? JSON.parse(event.data) : event.data;
-        } catch (e) {
-          var json = null;
-        }
+        try { var json = msgIsString ? JSON.parse(event.data) : event.data; } catch (e) { var json = null; }
         if (typeof json === "object" && json !== null && "__gppCall" in json) {
           var i = json.__gppCall;
           window.__gpp(
             i.command,
             function (retValue, success) {
-              var returnMsg = {
-                __gppReturn: {
-                  returnValue: retValue,
-                  success: success,
-                  callId: i.callId,
-                },
-              };
+              var returnMsg = { __gppReturn: { returnValue: retValue, success: success, callId: i.callId } };
               event.source.postMessage(msgIsString ? JSON.stringify(returnMsg) : returnMsg, "*");
             },
             "parameter" in i ? i.parameter : null,
@@ -325,29 +291,21 @@
   </script>
   <!-- End InMobi Choice. Consent Manager Tag v3.0 (for TCF 2.2) -->
 
-  <!-- Google Consent Mode v2 default states (will be updated by CMP when user chooses) -->
+  <!-- Google Consent Mode v2 defaults (ohne GA4) -->
   <script>
-    // Default denied until consent is given; Google will read TCF string from CMP
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}    
     gtag('consent', 'default', {
-      'ad_storage': 'denied',
-      'analytics_storage': 'denied',
-      'ad_user_data': 'denied',
-      'ad_personalization': 'denied',
-      'wait_for_update': 500
+      ad_storage: 'denied',
+      analytics_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      wait_for_update: 500
     });
   </script>
 
-  <!-- Google tag (gtag.js) - replace G-XXXXXXXXXX with your GA4 Measurement ID -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-  <script>
-    gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX', { anonymize_ip: true });
-  </script>
-
-  <!-- Google AdSense (replace ca-pub-XXXXXXXXXXXXXXXX with your publisher id) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+  <!-- Google AdSense (mit deiner Publisher-ID) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7587905297330064" crossorigin="anonymous"></script>
 
   <style>
     body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.5;margin:0;padding:2rem;background:#0f172a;color:#e5e7eb}
@@ -364,34 +322,38 @@
 </head>
 <body>
   <div class="container">
-    <h1>InMobi CMP + Google Consent Mode v2 – Demo</h1>
+    <h1>InMobi CMP + Google AdSense (ohne Analytics)</h1>
+
     <div class="card">
       <p>
         Diese Beispiel-<code>index.html</code> lädt die <strong>InMobi Choice CMP</strong> (TCF 2.2) und initialisiert den <strong>Google Consent Mode v2</strong>.
-        Ersetze die Platzhalter:
+        Google AdSense ist mit deiner Publisher-ID <code>ca-pub-7587905297330064</code> eingebunden.
       </p>
-      <ul>
-        <li><code>host</code> ggf. mit <code>www.bilder-konvertieren.de</code>, falls deine Seite so ausliefert</li>
-        <li><code>G-XXXXXXXXXX</code> &rarr; GA4 Measurement-ID</li>
-        <li><code>ca-pub-XXXXXXXXXXXXXXXX</code> &rarr; AdSense Publisher-ID</li>
-      </ul>
-      <p class="small">Nach dem Nutzerentscheid aktualisiert die CMP automatisch die Consent-Signale, Google liest diese aus.</p>
-
-      <div class="row mt">
-        <button class="btn" id="check-consent">TCF Ping in Konsole</button>
-        <button class="btn secondary" id="check-gcm">Consent Mode Status in Konsole</button>
-      </div>
-      <pre class="small mt">Öffne die Browser-Konsole und nutze außerdem:
-__tcfapi('getTCData', 2, console.log);
-__tcfapi('ping', 2, console.log);
-      </pre>
+      <p class="small">Nach der Einwilligung werden Anzeigen geladen (je nach Richtlinien & Auslieferung kann es einige Minuten dauern).</p>
     </div>
 
     <div class="card mt">
-      <h2>AdSense Demo-Platzhalter</h2>
-      <p class="small">Dieser Platz ist für eine Anzeige vorgesehen (wird ohne gültige Publisher-ID / ohne Zustimmung nicht laden).</p>
-      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <h2>AdSense Anzeige</h2>
+      <p class="small">Beispiel-AdSlot. Ersetzt <code>data-ad-slot</code> später durch deinen echten Slot.</p>
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-7587905297330064"
+           data-ad-slot="1234567890"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
       <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+    </div>
+
+    <div class="card mt">
+      <h2>Debug-Helfer</h2>
+      <div class="row mt">
+        <button class="btn" id="check-consent">TCF Ping</button>
+        <button class="btn secondary" id="check-dl">dataLayer</button>
+      </div>
+      <pre class="small mt">Konsole öffnen und testen:
+__tcfapi('ping', 2, console.log);
+__tcfapi('getTCData', 2, console.log);
+      </pre>
     </div>
   </div>
 
@@ -400,13 +362,10 @@ __tcfapi('ping', 2, console.log);
       if (typeof __tcfapi === 'function') {
         __tcfapi('ping', 2, function(r){ console.log('TCF ping:', r); });
         __tcfapi('getTCData', 2, function(r, s){ console.log('TCData:', r, s); });
-      } else {
-        console.warn('__tcfapi ist noch nicht initialisiert');
-      }
+      } else { console.warn('__tcfapi noch nicht initialisiert'); }
     });
-
-    document.getElementById('check-gcm').addEventListener('click', function(){
-      console.log('dataLayer', window.dataLayer);
+    document.getElementById('check-dl').addEventListener('click', function(){
+      console.log('dataLayer:', window.dataLayer);
     });
   </script>
 </body>
