@@ -50,7 +50,7 @@
     makeStub();
 
     function makeGppStub(){const CMP_ID=10; const SUPPORTED_APIS=['2:tcfeuv2','6:uspv1','7:usnatv1','8:usca','9:usvav1','10:uscov1','11:usutv1','12:usctv1'];
-      window.__gpp_addFrame=function(n){if(!window.frames[n]){if(document.body){var i=document.createElement('iframe'); i.style.cssText='display:none'; i.name=n; document.body.appendChild(i);}else{window.setTimeout(window.__gpp_addFrame,10,n);}}};
+      window.__gpp_addFrame=function(n){if(!window.frames[n]){if(document.body){var i=document.createElement('iframe'); i.style.cssText='display:none'; i.name=n; document.body.appendChild(i);}else{window.setTimeout(window.__gpp_addFrame,10, n);}}};
       window.__gpp_stub=function(){var b=arguments; __gpp.queue=__gpp.queue||[]; __gpp.events=__gpp.events||[]; if(!b.length||(b.length==1&&b[0]=='queue')){return __gpp.queue;} if(b.length==1&&b[0]=='events'){return __gpp.events;}
         var cmd=b[0], clb=b.length>1?b[1]:null, par=b.length>2?b[2]:null; if(cmd==='ping'){clb({gppVersion:'1.1',cmpStatus:'stub',cmpDisplayStatus:'hidden',signalStatus:'not ready',supportedAPIs:SUPPORTED_APIS,cmpId:CMP_ID,sectionList:[],applicableSections:[-1],gppString:'',parsedSections:{}},true);} 
         else if(cmd==='addEventListener'){if(!('lastId' in __gpp)){__gpp.lastId=0;} __gpp.lastId++; var lnr=__gpp.lastId; __gpp.events.push({id:lnr,callback:clb,parameter:par}); clb({eventName:'listenerRegistered',listenerId:lnr,data:true,pingData:{gppVersion:'1.1',cmpStatus:'stub',cmpDisplayStatus:'hidden',signalStatus:'not ready',supportedAPIs:SUPPORTED_APIS,cmpId:CMP_ID,sectionList:[],applicableSections:[-1],gppString:'',parsedSections:{}}},true);} 
@@ -80,7 +80,7 @@
     });
   </script>
 
-  <!-- Google AdSense Loader mit Publisher-ID -->
+  <!-- AdSense Loader (mit deiner Publisher-ID) -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7587905297330064" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -104,10 +104,17 @@
       <button class="btn" id="download" disabled>Alle herunterladen (.zip)</button>
     </div>
 
-    <!-- AdSense: Responsive Anzeige unter dem Tool -->
+    <!-- Unten: Dein konkreter AdSense Block mit Slot-ID 3992753611 -->
     <div class="ad">
-      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7587905297330064" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
-      <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-7587905297330064"
+           data-ad-slot="3992753611"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
     </div>
 
     <p class="footer"><em>*AVIF abhängig von Browserunterstützung. Fallback erfolgt automatisch.</em></p>
@@ -119,10 +126,9 @@
     </div>
   </div>
 
-  <!-- Platzhalter-Logik: Dein bisheriges JS zur Konvertierung hier einbinden -->
+  <!-- Platzhalter-Logik: Hier würde dein bestehender Konverter‑Code geladen -->
   <script>
-    // Hier würde dein bestehender Konverter‑Code geladen (aus deiner ursprünglichen Seite).
-    // Ich habe absichtlich kein Verhalten verändert – nur die CMP, Consent Mode und AdSense eingefügt.
+    // Keine Funktionsänderung – nur CMP + Consent Mode + AdSense integriert
   </script>
 </body>
 </html>
